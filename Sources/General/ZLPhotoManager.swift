@@ -303,6 +303,7 @@ public class ZLPhotoManager: NSObject {
         }
     }
     
+    @available(iOS 9.1, *)
     class func fetchLivePhoto(for asset: PHAsset, completion: @escaping ( (PHLivePhoto?, [AnyHashable: Any]?, Bool) -> Void )) -> PHImageRequestID {
         let option = PHLivePhotoRequestOptions()
         option.version = .current

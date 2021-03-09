@@ -384,7 +384,7 @@ public class ZLPhotoPreviewSheet: UIView {
     
     @objc func cameraBtnClick() {
         let config = ZLPhotoConfiguration.default()
-        if config.useCustomCamera {
+        if #available(iOS 10.0, *), config.useCustomCamera {
             let camera = ZLCustomCamera()
             camera.takeDoneBlock = { [weak self] (image, videoUrl) in
                 self?.save(image: image, videoUrl: videoUrl)

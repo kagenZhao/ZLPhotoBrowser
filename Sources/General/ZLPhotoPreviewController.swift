@@ -166,7 +166,7 @@ class ZLPhotoPreviewController: UIViewController {
         }
         if let cell = cell as? ZLGifPreviewCell {
             cell.loadGifWhenCellDisplaying()
-        } else if let cell = cell as? ZLLivePhotoPreviewCell {
+        } else if #available(iOS 9.1, *), let cell = cell as? ZLLivePhotoPreviewCell {
             cell.loadLivePhotoData()
         }
     }
@@ -262,8 +262,10 @@ class ZLPhotoPreviewController: UIViewController {
         
         ZLPhotoPreviewCell.zl_register(self.collectionView)
         ZLGifPreviewCell.zl_register(self.collectionView)
-        ZLLivePhotoPreviewCell.zl_register(self.collectionView)
         ZLVideoPreviewCell.zl_register(self.collectionView)
+        if #available(iOS 9.1, *) {
+            ZLLivePhotoPreviewCell.zl_register(self.collectionView)
+        }
         
         // bottom view
         self.bottomView = UIView()
@@ -342,7 +344,7 @@ class ZLPhotoPreviewController: UIViewController {
             }
             if cell is ZLVideoPreviewCell {
                 (cell as! ZLVideoPreviewCell).pauseWhileTransition()
-            } else if cell is ZLLivePhotoPreviewCell {
+            } else if #available(iOS 9.1, *), cell is ZLLivePhotoPreviewCell {
                 (cell as! ZLLivePhotoPreviewCell).livePhotoView.stopPlayback()
             } else if cell is ZLGifPreviewCell {
                 (cell as! ZLGifPreviewCell).pauseGif()
@@ -396,9 +398,16 @@ class ZLPhotoPreviewController: UIViewController {
         self.selPhotoPreview?.isHidden = selCount == 0
         self.refreshBottomViewFrame()
         
+        var setLivePhotoLikeImage = false
+        if #available(iOS 9.1, *) {
+            if (!config.allowSelectLivePhoto && currentModel.type == .livePhoto) {
+                setLivePhotoLikeImage = true
+            }
+        }
+        
         var hideEditBtn = true
         if selCount < config.maxSelectCount || nav.arrSelectedModels.contains(where: { $0 == currentModel }) {
-            if config.allowEditImage && (currentModel.type == .image || (currentModel.type == .gif && !config.allowSelectGif) || (currentModel.type == .livePhoto && !config.allowSelectLivePhoto)) {
+            if config.allowEditImage && (currentModel.type == .image || (currentModel.type == .gif && !config.allowSelectGif) || setLivePhotoLikeImage) {
                 hideEditBtn = false
             }
             if config.allowEditVideo && currentModel.type == .video && (selCount == 0 || (selCount == 1 && nav.arrSelectedModels.first == currentModel)) {
@@ -408,7 +417,7 @@ class ZLPhotoPreviewController: UIViewController {
         self.editBtn.isHidden = hideEditBtn
         
         if ZLPhotoConfiguration.default().allowSelectOriginal && ZLPhotoConfiguration.default().allowSelectImage {
-            self.originalBtn.isHidden = !((currentModel.type == .image) || (currentModel.type == .livePhoto && !config.allowSelectLivePhoto) || (currentModel.type == .gif && !config.allowSelectGif))
+            self.originalBtn.isHidden = !((currentModel.type == .image) || setLivePhotoLikeImage || (currentModel.type == .gif && !config.allowSelectGif))
         }
     }
     
@@ -461,7 +470,14 @@ class ZLPhotoPreviewController: UIViewController {
         let model = self.arrDataSources[self.currentIndex]
         let hud = ZLProgressHUD(style: config.hudStyle)
         
-        if model.type == .image || (!config.allowSelectGif && model.type == .gif) || (!config.allowSelectLivePhoto && model.type == .livePhoto) {
+        var setLivePhotoLikeImage = false
+        if #available(iOS 9.1, *) {
+            if (!config.allowSelectLivePhoto && model.type == .livePhoto) {
+                setLivePhotoLikeImage = true
+            }
+        }
+        
+        if model.type == .image || (!config.allowSelectGif && model.type == .gif) || setLivePhotoLikeImage {
             hud.show()
             ZLPhotoManager.fetchImage(for: model.asset, size: model.previewSize) { [weak self] (image, isDegraded) in
                 if !isDegraded {
@@ -643,7 +659,7 @@ extension ZLPhotoPreviewController {
         let cell = self.collectionView.cellForItem(at: IndexPath(row: self.currentIndex, section: 0))
         if let cell = cell as? ZLGifPreviewCell {
             cell.loadGifWhenCellDisplaying()
-        } else if let cell = cell as? ZLLivePhotoPreviewCell {
+        } else if #available(iOS 9.1, *),  let cell = cell as? ZLLivePhotoPreviewCell {
             cell.loadLivePhotoData()
         }
     }
@@ -689,7 +705,7 @@ extension ZLPhotoPreviewController: UICollectionViewDataSource, UICollectionView
             cell.model = model
             
             baseCell = cell
-        } else if config.allowSelectLivePhoto, model.type == .livePhoto {
+        } else if #available(iOS 9.1, *),  config.allowSelectLivePhoto, model.type == .livePhoto {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ZLLivePhotoPreviewCell.zl_identifier(), for: indexPath) as! ZLLivePhotoPreviewCell
             
             cell.model = model
@@ -1013,7 +1029,7 @@ class ZLPhotoPreviewSelectedViewCell: UICollectionViewCell {
             self.tagImageView.isHidden = true
             self.tagLabel.isHidden = false
             self.tagLabel.text = "GIF"
-        } else if ZLPhotoConfiguration.default().allowSelectLivePhoto, self.model.type == .livePhoto {
+        } else if #available(iOS 9.1, *), ZLPhotoConfiguration.default().allowSelectLivePhoto, self.model.type == .livePhoto {
             self.tagImageView.isHidden = false
             self.tagImageView.image = getImage("zl_livePhoto")
             self.tagLabel.isHidden = true

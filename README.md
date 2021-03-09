@@ -51,7 +51,7 @@ If you only want to use the image edit feature, please move to [ZLImageEditor](h
 > If you have good needs and suggestions in use, or encounter any bugs, please create an issue and I will reply in time.
  
 ### <a id="Requirements"></a>Requirements
- * iOS 10.0
+ * iOS 9.0
  * Swift 5.x
  * Xcode 12.x
  

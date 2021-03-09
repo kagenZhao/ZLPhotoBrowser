@@ -192,7 +192,7 @@ class ZLThumbnailPhotoCell: UICollectionViewCell {
             self.livePhotoTag.isHidden = true
             self.editImageTag.isHidden = true
             self.descLabel.text = "GIF"
-        } else if self.model.type == .livePhoto {
+        } else if #available(iOS 9.1, *), self.model.type == .livePhoto {
             self.bottomShadowView.isHidden = !ZLPhotoConfiguration.default().allowSelectLivePhoto
             self.videoTag.isHidden = true
             self.livePhotoTag.isHidden = false

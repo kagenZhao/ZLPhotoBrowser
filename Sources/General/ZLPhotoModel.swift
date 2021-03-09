@@ -33,6 +33,7 @@ extension ZLPhotoModel {
         case unknown = 0
         case image
         case gif
+        @available(iOS 9.1, *)
         case livePhoto
         case video
     }

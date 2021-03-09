@@ -28,6 +28,7 @@ import UIKit
 import AVFoundation
 import CoreMotion
 
+@available(iOS 10.0, *)
 public class ZLCustomCamera: UIViewController, CAAnimationDelegate {
 
     struct Layout {
@@ -868,7 +869,7 @@ public class ZLCustomCamera: UIViewController, CAAnimationDelegate {
 
 }
 
-
+@available(iOS 10.0, *)
 extension ZLCustomCamera: AVCapturePhotoCaptureDelegate {
     
     public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
@@ -890,7 +891,7 @@ extension ZLCustomCamera: AVCapturePhotoCaptureDelegate {
     
 }
 
-
+@available(iOS 10.0, *)
 extension ZLCustomCamera: AVCaptureFileOutputRecordingDelegate {
     
     public func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
@@ -963,7 +964,7 @@ extension ZLCustomCamera: AVCaptureFileOutputRecordingDelegate {
     
 }
 
-
+@available(iOS 10.0, *)
 extension ZLCustomCamera: UIGestureRecognizerDelegate {
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -979,90 +980,6 @@ extension ZLCustomCamera: UIGestureRecognizerDelegate {
             return false
         }
         return true
-    }
-    
-}
-
-
-extension ZLCustomCamera {
-    
-    @objc public enum CaptureSessionPreset: Int {
-        
-        var avSessionPreset: AVCaptureSession.Preset {
-            switch self {
-            case .cif352x288:
-                return .cif352x288
-            case .vga640x480:
-                return .vga640x480
-            case .hd1280x720:
-                return .hd1280x720
-            case .hd1920x1080:
-                return .hd1920x1080
-            case .hd4K3840x2160:
-                return .hd4K3840x2160
-            }
-        }
-        
-        case cif352x288
-        case vga640x480
-        case hd1280x720
-        case hd1920x1080
-        case hd4K3840x2160
-    }
-    
-    @objc public enum CameraFlashMode: Int  {
-        
-        // 转自定义相机
-        var avFlashMode: AVCaptureDevice.FlashMode {
-            switch self {
-            case .auto:
-                return .auto
-            case .on:
-                return .on
-            case .off:
-                return .off
-            }
-        }
-        
-        // 转系统相机
-        var imagePickerFlashMode: UIImagePickerController.CameraFlashMode {
-            switch self {
-            case .auto:
-                return .auto
-            case .on:
-                return .on
-            case .off:
-                return .off
-            }
-        }
-        
-        case auto
-        case on
-        case off
-    }
-    
-    @objc public enum VideoExportType: Int {
-        
-        var format: String {
-            switch self {
-            case .mov:
-                return "mov"
-            case .mp4:
-                return "mp4"
-            }
-        }
-        
-        var avFileType: AVFileType {
-            switch self {
-            case .mov:
-                return .mov
-            case .mp4:
-                return .mp4
-            }
-        }
-        
-        case mov
-        case mp4
     }
     
 }

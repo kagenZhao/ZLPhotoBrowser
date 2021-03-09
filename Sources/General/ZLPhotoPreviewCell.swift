@@ -350,6 +350,8 @@ class ZLGifPreviewCell: ZLPreviewBaseCell {
 
 
 // MARK: live photo preview cell
+
+@available(iOS 9.1, *)
 class ZLLivePhotoPreviewCell: ZLPreviewBaseCell {
     
     override var currentImage: UIImage? {

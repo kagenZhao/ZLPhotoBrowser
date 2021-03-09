@@ -102,9 +102,18 @@ public class ZLPhotoConfiguration: NSObject {
     /// If value is false, the Gif logo is not displayed. Defaults to true.
     @objc public var allowSelectGif = true
     
+    private var _allowSelectLivePhoto = false
     /// Allow select LivePhoto, it only controls whether it is displayed in LivePhoto form.
     /// If value is false, the LivePhoto logo is not displayed. Defaults to false.
-    @objc public var allowSelectLivePhoto = false
+    @available(iOS 9.1, *)
+    @objc public var allowSelectLivePhoto: Bool {
+        set {
+            _allowSelectLivePhoto = newValue
+        }
+        get {
+            return _allowSelectLivePhoto
+        }
+    }
     
     private var pri_allowTakePhotoInLibrary = true
     /// Allow take photos in the album. Defaults to true.
@@ -345,8 +354,17 @@ public class ZLPhotoConfiguration: NSObject {
         }
     }
     
+    private var _useCustomCamera = true
     /// Whether to use custom camera. Defaults to true.
-    @objc public var useCustomCamera = true
+    @available(iOS 10.0, *)
+    @objc public var useCustomCamera: Bool {
+        set {
+            _useCustomCamera = newValue
+        }
+        get {
+            return _useCustomCamera
+        }
+    }
     
     private var pri_allowTakePhoto = true
     /// Allow taking photos in the camera (Need allowSelectImage to be true). Defaults to true.
@@ -392,14 +410,23 @@ public class ZLPhotoConfiguration: NSObject {
         }
     }
     
+    private var _sessionPreset: Any? = nil
     /// Video resolution. Defaults to hd1280x720.
-    @objc public var sessionPreset: ZLCustomCamera.CaptureSessionPreset = .hd1280x720
+    @available(iOS 10.0, *)
+    @objc public var sessionPreset: ZLCamera.CaptureSessionPreset {
+        set {
+            _sessionPreset = newValue
+        }
+        get {
+            return (_sessionPreset as? ZLCamera.CaptureSessionPreset) ?? .hd1280x720
+        }
+    }
     
     /// Video export format for recording video and editing video. Defaults to mov.
-    @objc public var videoExportType: ZLCustomCamera.VideoExportType = .mov
-    
+    @objc public var videoExportType: ZLCamera.VideoExportType = .mov
+
     /// Camera flahs mode. Default is off. Defaults to off.
-    @objc public var cameraFlashMode: ZLCustomCamera.CameraFlashMode = .off
+    @objc public var cameraFlashMode: ZLCamera.CameraFlashMode = .off
     
     /// Hud style. Defaults to lightBlur.
     @objc public var hudStyle: ZLProgressHUD.HUDStyle = .lightBlur

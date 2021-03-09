@@ -311,11 +311,13 @@ class ZLTextStickerView: UIView, ZLStickerViewAdditional {
     func startTimer() {
         self.cleanTimer()
         self.borderView.layer.borderColor = UIColor.white.cgColor
-        self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false, block: { (_) in
-            self.hideBorder()
-            self.cleanTimer()
-        })
+        self.timer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(timerAction), userInfo: nil, repeats: false)
         RunLoop.current.add(self.timer!, forMode: .default)
+    }
+    
+    @objc func timerAction() {
+        self.hideBorder()
+        self.cleanTimer()
     }
     
     func cleanTimer() {

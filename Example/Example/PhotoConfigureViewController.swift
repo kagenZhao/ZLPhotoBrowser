@@ -1059,7 +1059,7 @@ class PhotoConfigureViewController: UIViewController {
     }
     
     @objc func cameraFlashSegmentChanged() {
-        config.cameraFlashMode = ZLCustomCamera.CameraFlashMode(rawValue: cameraFlashSegment.selectedSegmentIndex)!
+        config.cameraFlashMode = ZLCamera.CameraFlashMode(rawValue: cameraFlashSegment.selectedSegmentIndex)!
     }
 
 }

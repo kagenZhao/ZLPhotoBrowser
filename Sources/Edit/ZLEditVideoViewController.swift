@@ -376,12 +376,7 @@ public class ZLEditVideoViewController: UIViewController {
         self.cleanTimer()
         let duration = self.interval * TimeInterval(self.clipRect().width / ZLEditVideoViewController.frameImageSize.width)
         
-        self.timer = Timer.scheduledTimer(withTimeInterval: duration, repeats: true, block: { (_) in
-            self.playerLayer.player?.seek(to: self.getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
-            if (self.playerLayer.player?.rate ?? 0) == 0 {
-                self.playerLayer.player?.play()
-            }
-        })
+        self.timer = Timer.scheduledTimer(timeInterval: duration, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         
         self.timer?.fire()
         RunLoop.main.add(self.timer!, forMode: .common)
@@ -393,6 +388,13 @@ public class ZLEditVideoViewController: UIViewController {
         UIView.animate(withDuration: duration, delay: 0, options: [.allowUserInteraction, .curveLinear, .repeat], animations: {
             self.indicator.frame = CGRect(x: self.rightSideView.frame.maxX-2, y: self.rightSideView.frame.minY, width: 2, height: self.rightSideView.frame.height)
         }, completion: nil)
+    }
+    
+    @objc func timerAction() {
+        self.playerLayer.player?.seek(to: self.getStartTime(), toleranceBefore: .zero, toleranceAfter: .zero)
+        if (self.playerLayer.player?.rate ?? 0) == 0 {
+            self.playerLayer.player?.play()
+        }
     }
     
     func cleanTimer() {
