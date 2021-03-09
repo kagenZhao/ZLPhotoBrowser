@@ -125,8 +125,6 @@ class ZLPhotoPreviewController: UIViewController {
         
         guard self.isFirstAppear else { return }
         self.isFirstAppear = false
-        
-        self.reloadCurrentCell()
     }
     
     override func viewDidLayoutSubviews() {
@@ -158,6 +156,9 @@ class ZLPhotoPreviewController: UIViewController {
                 self.collectionView.setContentOffset(CGPoint(x: (self.view.frame.width + ZLPhotoPreviewController.colItemSpacing) * CGFloat(self.indexBeforOrientationChanged), y: 0), animated: false)
              })
         }
+        // Peek-pop 后 viewDidLayoutSubviews 比 viewDidAppear 执行晚, 导致collectionView布局还没完成
+        // TODO: 放到这里貌似没问题, 待测试
+        self.reloadCurrentCell()
     }
     
     func reloadCurrentCell() {

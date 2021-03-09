@@ -187,6 +187,10 @@ class ZLThumbnailViewController: UIViewController {
         if #available(iOS 14.0, *), PHPhotoLibrary.authorizationStatus(for: .readWrite) == .limited {
             PHPhotoLibrary.shared().register(self)
         }
+        
+        if self.traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: collectionView)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -1166,6 +1170,59 @@ extension ZLThumbnailViewController: UIImagePickerControllerDelegate, UINavigati
         }
     }
     
+}
+
+extension ZLThumbnailViewController: UIViewControllerPreviewingDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        guard let indexPath = collectionView.indexPathForItem(at: location), let c = collectionView.cellForItem(at: indexPath) else { return nil }
+        previewingContext.sourceRect = c.frame
+
+        if c is ZLCameraCell {
+            return nil
+        }
+        
+        if #available(iOS 14, *) {
+            if c is ZLAddPhotoCell {
+                return nil
+            }
+        }
+        
+        guard let cell = c as? ZLThumbnailPhotoCell else {
+            return nil
+        }
+        
+        if !ZLPhotoConfiguration.default().allowPreviewPhotos {
+            return nil
+        }
+        
+        if !cell.enableSelect, ZLPhotoConfiguration.default().showInvalidMask {
+            return nil
+        }
+        let config = ZLPhotoConfiguration.default()
+        
+        var index = indexPath.row
+        if !config.sortAscending {
+            index -= self.offset
+        }
+        let model = self.arrDataSources[index]
+        
+        switch model.type {
+        case .gif, .image, .livePhoto: break
+        case .video, .unknown: return nil
+        }
+        
+        let vc = ZLPeepPreviewController(model: model) { [weak self] in
+            guard let self = self else { return }
+            self.collectionView(self.collectionView, didSelectItemAt: indexPath)
+        }
+        vc.preferredContentSize = model.previewSize
+        return vc
+    }
+    
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        guard let vc = viewControllerToCommit as? ZLPeepPreviewController else { return }
+        vc.popAction()
+    }
 }
 
 
