@@ -89,11 +89,34 @@ class ZLCameraCell: UICollectionViewCell {
                 }
             }
         } else {
-            self.setupSession()
+            /// 优化主线程卡顿
+            DispatchQueue.main.async {
+                self.setupSession()
+            }
         }
     }
     
     func setupSession() {
+        defer {
+            /// Fix: 从相机界面返回会延续之前的曝光值, 导致过爆或过暗
+            if let camera = self.videoInput?.device {
+                do {
+                    try camera.lockForConfiguration()
+                    if camera.isExposureModeSupported(.continuousAutoExposure) == true {
+                        camera.exposureMode = .continuousAutoExposure
+                    }
+                    camera.unlockForConfiguration()
+                } catch {
+                    zl_debugPrint("调整曝光模式失败 \(error.localizedDescription)")
+                }
+            }
+            
+            /// Fix: 从照相界面返回有时session.isRunning = false
+            if !(self.session?.isRunning ?? false) {
+                self.session?.startRunning()
+            }
+        }
+        
         guard self.session == nil, (self.session?.isRunning ?? false) == false else {
             return
         }
@@ -131,8 +154,6 @@ class ZLCameraCell: UICollectionViewCell {
         self.previewLayer?.frame = self.contentView.layer.bounds
         self.previewLayer?.videoGravity = .resizeAspectFill
         self.contentView.layer.insertSublayer(self.previewLayer!, at: 0)
-        
-        self.session?.startRunning()
     }
     
     func backCamera() -> AVCaptureDevice? {
