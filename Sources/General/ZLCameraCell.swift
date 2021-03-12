@@ -117,7 +117,7 @@ class ZLCameraCell: UICollectionViewCell {
             }
         }
         
-        guard self.session == nil, (self.session?.isRunning ?? false) == false else {
+        guard self.session == nil else {
             return
         }
         self.session?.stopRunning()
